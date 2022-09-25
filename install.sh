@@ -634,17 +634,17 @@ installTools() {
 	# 检测nginx版本，并提供是否卸载的选项
 
 	if ! find /usr/bin /usr/sbin | grep -q -w nginx; then
-		echoContent green " ---> 安装nginx"
+		echoContent green " ---> Install nginx"
 		installNginxTools
 	else
 		nginxVersion=$(nginx -v 2>&1)
 		nginxVersion=$(echo "${nginxVersion}" | awk -F "[n][g][i][n][x][/]" '{print $2}' | awk -F "[.]" '{print $2}')
 		if [[ ${nginxVersion} -lt 14 ]]; then
-			read -r -p "读取到当前的Nginx版本不支持gRPC，会导致安装失败，是否卸载Nginx后重新安装 ？[y/n]:" unInstallNginxStatus
+			read -r -p "Nginx saat ini tidak mendukung gRPC, yang akan menyebabkan instalasi gagal, apakah akan menghapus instalan Nginx dan menginstalnya kembali ？[y/n]:" unInstallNginxStatus
 			if [[ "${unInstallNginxStatus}" == "y" ]]; then
 				${removeType} nginx >/dev/null 2>&1
-				echoContent yellow " ---> nginx卸载完成"
-				echoContent green " ---> 安装nginx"
+				echoContent yellow " ---> Uninstall nginx selesai"
+				echoContent green " ---> install nginx"
 				installNginxTools >/dev/null 2>&1
 			else
 				exit 0
@@ -652,7 +652,7 @@ installTools() {
 		fi
 	fi
 	if ! find /usr/bin /usr/sbin | grep -q -w semanage; then
-		echoContent green " ---> 安装semanage"
+		echoContent green " ---> Install semanage"
 		${installType} bash-completion >/dev/null 2>&1
 
 		if [[ "${centosVersion}" == "7" ]]; then
@@ -675,9 +675,9 @@ installTools() {
 		curl -s https://get.acme.sh | sh >/etc/v2ray-agent/tls/acme.log 2>&1
 
 		if [[ ! -d "$HOME/.acme.sh" ]] || [[ -z $(find "$HOME/.acme.sh/acme.sh") ]]; then
-			echoContent red "  acme安装失败--->"
+			echoContent red "  installasi acme gagal--->"
 			tail -n 100 /etc/v2ray-agent/tls/acme.log
-			echoContent yellow "错误排查:"
+			echoContent yellow "Penyelesaian masalah:"
 			echoContent red "  1.获取Github文件失败，请等待Github恢复后尝试，恢复进度可查看 [https://www.githubstatus.com/]"
 			echoContent red "  2.acme.sh脚本出现bug，可查看[https://github.com/acmesh-official/acme.sh] issues"
 			echoContent red "  3.如纯IPv6机器，请设置NAT64,可执行下方命令"
@@ -986,12 +986,12 @@ EOF
 
 # 检查ip
 checkIP() {
-	echoContent skyBlue "\n ---> 检查域名ip中"
+	echoContent skyBlue "\n ---> Perikas nama domain/ip"
 	localIP=$(curl -s -m 2 "${domain}/ip")
 	handleNginx stop
 	if [[ -z ${localIP} ]] || ! echo "${localIP}" | sed '1{s/[^(]*(//;s/).*//;q}' | grep -q '\.' && ! echo "${localIP}" | sed '1{s/[^(]*(//;s/).*//;q}' | grep -q ':'; then
-		echoContent red "\n ---> 未检测到当前域名的ip"
-		echoContent skyBlue " ---> 请依次进行下列检查"
+		echoContent red "\n ---> Nama domain tidak terdeteksi ip"
+		echoContent skyBlue " ---> Silahkan periksa domain"
 		echoContent yellow " --->  1.检查域名是否书写正确"
 		echoContent yellow " --->  2.检查域名dns解析是否正确"
 		echoContent yellow " --->  3.如解析正确，请等待dns生效，预计三分钟内生效"
